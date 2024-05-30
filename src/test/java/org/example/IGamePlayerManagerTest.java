@@ -3,15 +3,17 @@ package org.example;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class IGamePlayerManagerTest {
-    IGamePlayerManager IGPM;
+    static IGamePlayerManager IGPM;
 
     @BeforeAll
     public static void setUp(){
-
-    }
+        IGPM = new IGamePlayerManagerImpl();
+        }
 
     @Test
     void registerPlayerTest() {
@@ -35,9 +37,10 @@ class IGamePlayerManagerTest {
         IGPM.registerPlayer("2", "Steve");
         IGPM.registerPlayer("3", "Ben");
         //Assert
-        assertEquals("Tom", IGPM.getPlayerDetails("1"));
-        assertFalse(IGPM.getPlayerDetails("4").contains("Nameless"));
+        assertTrue(IGPM.getPlayerDetails("3").contains("Ben"));
+        assertNull(IGPM.getPlayerDetails("4"));
     }
+
 
     @Test
     void updatePlayerScoreTest() {
@@ -48,28 +51,29 @@ class IGamePlayerManagerTest {
         IGPM.registerPlayer("2", "Steve");
         IGPM.registerPlayer("3", "Ben");
         IGPM.updatePlayerScore("1", 7);
-        IGPM.updatePlayerScore("2", 34);
+        IGPM.updatePlayerScore("2", 100);
         IGPM.updatePlayerScore("3", 0);
         //Assert
-        assertEquals(7, IGPM.checkLevelUp("1"));
-        assertEquals(34,IGPM.checkLevelUp("2"));
+        assertFalse(IGPM.checkLevelUp("1"));
+        assertTrue(IGPM.checkLevelUp("2"));
+        assertFalse(IGPM.checkLevelUp("3"));
     }
 
     @Test
     void checkLevelUpTest() {
         //Setup
-        // String player1 = "1, Tom, 94"
-        // String player2 = "2, Steve, 66"
-        // String player3 = "3, Ben, 74"
+        // ---
         //Execute
         IGPM.registerPlayer("1", "Tom");
         IGPM.registerPlayer("2", "Steve");
         IGPM.registerPlayer("3", "Ben");
         IGPM.updatePlayerScore("1", 7);
-        IGPM.updatePlayerScore("2", 34);
-        IGPM.updatePlayerScore("3", 0);
+        IGPM.updatePlayerScore("2", 131);
+        IGPM.updatePlayerScore("3", 99);
         //Assert
+        assertFalse(IGPM.checkLevelUp("1"));
         assertTrue(IGPM.checkLevelUp("2"));
+        assertFalse(IGPM.checkLevelUp("3"));
     }
 
     @Test
@@ -79,8 +83,10 @@ class IGamePlayerManagerTest {
         //Execute
         IGPM.registerPlayer("1", "Tom");
         IGPM.registerPlayer("2", "Steve");
-        IGPM.deletePlayer("2");
+        IGPM.registerPlayer("3", "Ben");
+        //IGPM.deletePlayer("3");
         //Assert
-        assertFalse(IGPM.getPlayerDetails("2").contains("Steve"));
+        assertTrue(IGPM.deletePlayer("3"));
+        assertFalse(IGPM.deletePlayer("4"));
     }
 }
